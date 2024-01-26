@@ -1,0 +1,8 @@
+.sqllite
+
+
+**/__pycache__/
+
+
+media/
+static/
