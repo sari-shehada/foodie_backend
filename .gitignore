@@ -1,8 +1,9 @@
-.sqllite
-
 
 **/__pycache__/
 
 
 media/
 static/
+
+meals/
+restaurants/
