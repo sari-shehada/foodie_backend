@@ -3,13 +3,13 @@ from django.db import models
 
 class Restaurant(models.Model):
     name = models.CharField(max_length=30)
-    username = models.CharField(max_length=30)
+    username = models.CharField(max_length=30, unique=True)
     password = models.CharField(max_length=30)
     subscriptionExpirationDate = models.DateField()
     location = models.CharField(max_length=100)
     phoneNumber = models.CharField(max_length=10, null=True)
     landLine = models.CharField(max_length=7)
-    image = models.ImageField(upload_to='restaurants')
+    image = models.ImageField(upload_to='restaurants/')
 
     def __str__(self):
         return self.name
@@ -29,7 +29,7 @@ class Meal(models.Model):
     ingredients = models.CharField(max_length=50)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
     category = models.ForeignKey(MealCategory, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='meals')
+    image = models.ImageField(upload_to='meals/')
 
     def __str__(self):
         return self.restaurant.name + " | " + self.name
@@ -38,7 +38,7 @@ class Meal(models.Model):
 class FoodieUser(models.Model):
     firstName = models.CharField(max_length=30)
     lastName = models.CharField(max_length=30)
-    username = models.CharField(max_length=30)
+    username = models.CharField(max_length=30, unique=True)
     password = models.CharField(max_length=30)
     phoneNumber = models.CharField(max_length=10)
 
