@@ -2,8 +2,10 @@ from random import choices
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
-from api.models import Restaurant
-from api.serializers import RestaurantSerializer
+from api.models import Meal, Restaurant
+from api.serializers import MealSerializer, RestaurantCategoryMealsSerializer, RestaurantSerializer
+from rest_framework import generics
+import rest_framework.filters as filters
 
 
 @api_view(['POST'])
@@ -35,3 +37,23 @@ def getDisplayRestaurants(request):
     selectedIds = choices(ids, k=5)
     restaurants = Restaurant.objects.filter(id__in=selectedIds)
     return Response(RestaurantSerializer(restaurants, context={'request': request}, many=True).data)
+
+
+class RestaurantSearch(generics.ListAPIView):
+    serializer_class = RestaurantSerializer
+    queryset = Restaurant.objects.all()
+    search_fields = ['name']
+    filter_backends = [filters.SearchFilter]
+
+
+@api_view(['GET'])
+def getRestaurantMeals(request, id):
+    try:
+        restaurant = Restaurant.objects.get(id=id)
+        meals = Meal.objects.filter(
+            restaurant=restaurant.pk)
+
+        mealCategories = set([meal.category for meal in meals])
+        return Response(RestaurantCategoryMealsSerializer(mealCategories, many=True, context={'request': request, 'restaurantId': id}).data)
+    except Restaurant.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)

@@ -25,6 +25,8 @@ class MealCategory(models.Model):
 class Meal(models.Model):
     name = models.CharField(max_length=30)
     price = models.FloatField(max_length=30)
+    discountedPrice = models.FloatField(
+        max_length=30, blank=True, default=None, null=True)
     rating = models.IntegerField()
     ingredients = models.CharField(max_length=50)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
