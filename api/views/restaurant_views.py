@@ -1,3 +1,4 @@
+from collections import ChainMap
 from random import choices
 import random
 from rest_framework.response import Response
@@ -59,3 +60,15 @@ def getRestaurantMeals(request, id):
         return Response(RestaurantCategoryMealsSerializer(mealCategories, many=True, context={'request': request, 'restaurantId': id}).data)
     except Restaurant.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
+def addMealToRestaurant(request, restaurantId):
+    data = request.data
+
+    addMealForm = dict(ChainMap(data, {'restaurant': restaurantId}))
+    addMealSerializer = MealSerializer(data=addMealForm)
+    if (addMealSerializer.is_valid()):
+        addMealSerializer.save()
+        return Response(status=status.HTTP_201_CREATED, data=True)
+    return Response(status=status.HTTP_400_BAD_REQUEST, data=addMealSerializer.errors)

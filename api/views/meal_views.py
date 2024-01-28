@@ -57,3 +57,32 @@ def updateMealRating(mealId):
     mealRatings = [rating.rating for rating in mealRatingsObjects]
     newRating = sum(mealRatings) / len(mealRatings)
     Meal.objects.filter(id=mealId).update(rating=newRating)
+
+
+@api_view(['POST'])
+def addPromotionToMeal(request, mealId):
+    promotionPrice = request.data.get('promotionPrice')
+    try:
+        promotionPrice = int(promotionPrice)
+        if (promotionPrice == 0):
+            raise ValueError
+    except:
+        return Response(status=status.HTTP_400_BAD_REQUEST, data='Please enter a valid promotion price')
+    try:
+        Meal.objects.get(id=mealId)
+    except Meal.DoesNotExist:
+        return Response(status=status.HTTP_400_BAD_REQUEST, data='Meal not found')
+
+    Meal.objects.filter(id=mealId).update(discountedPrice=promotionPrice)
+    return Response(status=status.HTTP_200_OK, data=True)
+
+
+@api_view(['POST'])
+def removeMealPromotion(request, mealId):
+    try:
+        Meal.objects.get(id=mealId)
+    except Meal.DoesNotExist:
+        return Response(status=status.HTTP_400_BAD_REQUEST, data='Meal not found')
+
+    Meal.objects.filter(id=mealId).update(discountedPrice=None)
+    return Response(status=status.HTTP_200_OK, data=True)
