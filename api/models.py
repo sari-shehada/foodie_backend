@@ -57,3 +57,11 @@ class MealRating(models.Model):
 
     def __str__(self):
         return self.user.__str__() + " -> " + self.meal.__str__() + " -> " + str(self.rating)
+
+
+class UserFavoriteMeal(models.Model):
+    meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
+    user = models.ForeignKey(FoodieUser, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.__str__() + " -> " + self.meal.__str__()
