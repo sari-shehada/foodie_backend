@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import FoodieUser, Meal, MealCategory, MealRating, Restaurant
+from api.models import FoodieUser, Meal, MealCategory, MealRating, Restaurant, UserFavoriteMeal
 
 
 class FoodieUserSerializer(serializers.ModelSerializer):
@@ -30,6 +30,12 @@ class MealSerializer(serializers.ModelSerializer):
 class MealCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = MealCategory
+        fields = "__all__"
+
+
+class UserFavoriteMealSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserFavoriteMeal
         fields = "__all__"
 
 

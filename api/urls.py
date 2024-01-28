@@ -15,4 +15,5 @@ api_urls = [
     path('restaurants/<int:id>/meals/', restaurant_views.getRestaurantMeals),
     path('rateMeal/', meal_views.rateMeal),
     path('categories/', category_views.getDisplayCategories),
+    path('meals/<int:mealId>/toggleFavorite/', user_views.toggleFavoriteMeal),
 ]
