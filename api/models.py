@@ -17,6 +17,8 @@ class Restaurant(models.Model):
 
 class MealCategory(models.Model):
     name = models.CharField(max_length=30)
+    image = models.ImageField(upload_to='categories/',
+                              default=None, blank=True, null=True)
 
     def __str__(self):
         return self.name

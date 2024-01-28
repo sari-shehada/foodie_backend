@@ -11,7 +11,7 @@ class FoodieUserSerializer(serializers.ModelSerializer):
 class FoodieUserDisplaySerializer(serializers.ModelSerializer):
     class Meta:
         model = FoodieUser
-        fields = ['username', 'firstName', 'lastName', 'phoneNumber']
+        exclude = ['password']
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
@@ -27,6 +27,12 @@ class MealSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class MealCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MealCategory
+        fields = "__all__"
+
+
 class RestaurantCategoryMealsSerializer(serializers.ModelSerializer):
     meals = serializers.SerializerMethodField(read_only=True)
 
@@ -34,8 +40,8 @@ class RestaurantCategoryMealsSerializer(serializers.ModelSerializer):
         restaurantId = self.context.get('restaurantId')
         meals = Meal.objects.filter(
             category=category.pk, restaurant=restaurantId)
-
-        return MealSerializer(meals, many=True).data
+        # TODO: Keep an eye
+        return MealSerializer(meals, many=True, context={'request': self.context.get('request')}).data
 
     class Meta:
         model = MealCategory

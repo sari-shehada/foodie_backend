@@ -1,4 +1,5 @@
 from random import choices
+import random
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
@@ -34,7 +35,8 @@ def getById(request, id):
 @api_view(['GET'])
 def getDisplayRestaurants(request):
     ids = Restaurant.objects.values_list('pk', flat=True)
-    selectedIds = choices(ids, k=5)
+    ids = sorted(ids)
+    selectedIds = random.sample(ids, k=5 if len(ids) > 5 else len(ids))
     restaurants = Restaurant.objects.filter(id__in=selectedIds)
     return Response(RestaurantSerializer(restaurants, context={'request': request}, many=True).data)
 
