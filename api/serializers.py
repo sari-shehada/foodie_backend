@@ -27,6 +27,26 @@ class MealSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class MealWithUserSerializer(serializers.ModelSerializer):
+    isInFavorites = serializers.SerializerMethodField(read_only=True)
+    myRating = serializers.SerializerMethodField(read_only=True)
+
+    def get_isInFavorites(self, meal):
+        userId = self.context.get('userId')
+        favorites = UserFavoriteMeal.objects.filter(meal=meal.pk, user=userId)
+        return len(favorites) > 0
+
+    def get_myRating(self, meal):
+        userId = self.context.get('userId')
+        ratingObject = MealRating.objects.filter(
+            meal=meal.pk, user=userId).first()
+        return ratingObject.rating if ratingObject != None else None
+
+    class Meta:
+        model = Meal
+        fields = "__all__"
+
+
 class MealCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = MealCategory

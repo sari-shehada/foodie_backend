@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view
 from api.models import FoodieUser, Meal, MealRating, Restaurant
 from rest_framework import status
 
-from api.serializers import MealRatingSerializer, MealSerializer
+from api.serializers import MealRatingSerializer, MealSerializer, MealWithUserSerializer
 
 
 @api_view(['POST'])
@@ -86,3 +86,20 @@ def removeMealPromotion(request, mealId):
 
     Meal.objects.filter(id=mealId).update(discountedPrice=None)
     return Response(status=status.HTTP_200_OK, data=True)
+
+
+@api_view(['GET'])
+def getMealDetails(request, mealId):
+    userId = request.GET.get('userId')
+    try:
+        meal = Meal.objects.get(id=mealId)
+    except Meal.DoesNotExist:
+        return Response(status=status.HTTP_400_BAD_REQUEST, data='Meal not found')
+
+    if (userId == None):
+        return Response(MealSerializer(meal, context={'request': request}).data)
+
+    return Response(MealWithUserSerializer(meal, context={
+        'request': request,
+        'userId': userId
+    }).data)

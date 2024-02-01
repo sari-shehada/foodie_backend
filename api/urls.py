@@ -17,6 +17,7 @@ api_urls = [
          restaurant_views.addMealToRestaurant),
     path('rateMeal/', meal_views.rateMeal),
     path('categories/', category_views.getDisplayCategories),
+    path('meals/<int:mealId>/', meal_views.getMealDetails),
     path('meals/<int:mealId>/toggleFavorite/', user_views.toggleFavoriteMeal),
     path('meals/<int:mealId>/addPromotion/', meal_views.addPromotionToMeal),
     path('meals/<int:mealId>/removePromotion/', meal_views.removeMealPromotion),
