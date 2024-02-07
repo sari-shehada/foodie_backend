@@ -44,7 +44,7 @@ class FoodieUser(models.Model):
     lastName = models.CharField(max_length=30)
     username = models.CharField(max_length=30, unique=True)
     password = models.CharField(max_length=30)
-    phoneNumber = models.CharField(max_length=10)
+    phoneNumber = models.CharField(max_length=10, unique=True)
 
     def __str__(self):
         return self.firstName + " " + self.lastName
