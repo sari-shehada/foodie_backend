@@ -9,6 +9,7 @@ api_urls = [
     path('users/signup/', user_views.createAccount),
     path('users/<int:id>/', user_views.getById),
     path('users/<int:userId>/favorites/', user_views.getUserFavorites),
+    path('getCartItems/', user_views.getCartItems),
     path('restaurants/login/', restaurant_views.login),
     path('restaurants/<int:id>/', restaurant_views.getById),
     path('restaurants/', restaurant_views.getDisplayRestaurants),

@@ -1,7 +1,8 @@
+import json
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
-from api.models import FoodieUser, Meal, UserFavoriteMeal
+from api.models import FoodieUser, Meal, Restaurant, UserFavoriteMeal
 from api.serializers import FoodieUserDisplaySerializer, FoodieUserSerializer, RestaurantFavoriteUserMealsSerializer, UserFavoriteMealSerializer
 
 
@@ -77,9 +78,30 @@ def getUserFavorites(request, userId):
         else:
             restaurantToMealsDict[restaurant] = [meal]
 
-    print(restaurantToMealsDict)
     response = []
-    for restaurantToMealKey, restaurantToMealValue in restaurantToMealsDict.items():
-        response.append(RestaurantFavoriteUserMealsSerializer(restaurantToMealKey, context={
-                        'request': request, 'meals': restaurantToMealValue}).data)
+    for restaurant, meals in restaurantToMealsDict.items():
+        response.append(RestaurantFavoriteUserMealsSerializer(restaurant, context={
+                        'request': request, 'meals': meals}).data)
+
     return Response(response)
+
+
+@api_view(["GET"])
+def getCartItems(request):
+    mealIds = request.GET.get('mealIds')
+    restaurantId = request.GET.get('restaurantId')
+    try:
+        restaurantId = int(restaurantId)
+    except:
+        return Response(status=status.HTTP_400_BAD_REQUEST, data='Invalid or No restaurant id was provided')
+    try:
+        mealIds = list(json.loads(mealIds))
+        if not isinstance(mealIds, list):
+            raise ValueError()
+    except:
+        return Response(status=status.HTTP_400_BAD_REQUEST, data='Invalid or No ids were provided')
+
+    restaurant = Restaurant.objects.get(id=restaurantId)
+    meals = Meal.objects.filter(id__in=mealIds)
+    return Response(RestaurantFavoriteUserMealsSerializer(restaurant, context={
+        'request': request, 'meals': meals}).data)
