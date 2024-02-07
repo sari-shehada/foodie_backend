@@ -21,6 +21,28 @@ class RestaurantSerializer(serializers.ModelSerializer):
         exclude = ['password']
 
 
+class RestaurantFavoriteUserMealsSerializer(serializers.ModelSerializer):
+    meals = serializers.SerializerMethodField(read_only=True)
+
+    def get_meals(self, restaurant):
+        request = self.context.get('request')
+        meals = self.context.get('meals')
+        return MealSerializer(meals, many=True, context={
+            'request': request, }).data
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        meals = data.pop('meals')
+        return {
+            'meals': meals,
+            'restaurant': data,
+        }
+
+    class Meta:
+        model = Restaurant
+        exclude = ['password']
+
+
 class MealSerializer(serializers.ModelSerializer):
     class Meta:
         model = Meal

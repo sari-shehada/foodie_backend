@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 from api.models import FoodieUser, Meal, UserFavoriteMeal
-from api.serializers import FoodieUserDisplaySerializer, FoodieUserSerializer, UserFavoriteMealSerializer
+from api.serializers import FoodieUserDisplaySerializer, FoodieUserSerializer, RestaurantFavoriteUserMealsSerializer, UserFavoriteMealSerializer
 
 
 @api_view(['POST'])
@@ -62,3 +62,24 @@ def toggleFavoriteMeal(request, mealId):
         UserFavoriteMeal.objects.filter(user=userId, meal=mealId).delete()
 
     return Response(status=status.HTTP_200_OK, data=True)
+
+
+@api_view(['GET'])
+def getUserFavorites(request, userId):
+    favorites = UserFavoriteMeal.objects.filter(user=userId)
+    restaurantToMealsDict = {}
+
+    for favoriteMeal in favorites:
+        meal = favoriteMeal.meal
+        restaurant = favoriteMeal.meal.restaurant
+        if (restaurant in restaurantToMealsDict):
+            restaurantToMealsDict[restaurant].append(meal)
+        else:
+            restaurantToMealsDict[restaurant] = [meal]
+
+    print(restaurantToMealsDict)
+    response = []
+    for restaurantToMealKey, restaurantToMealValue in restaurantToMealsDict.items():
+        response.append(RestaurantFavoriteUserMealsSerializer(restaurantToMealKey, context={
+                        'request': request, 'meals': restaurantToMealValue}).data)
+    return Response(response)
