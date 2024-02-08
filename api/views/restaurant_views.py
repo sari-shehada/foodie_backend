@@ -30,7 +30,7 @@ def getById(request, id):
         user = Restaurant.objects.get(id=id)
     except Restaurant.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    return Response(RestaurantSerializer(user).data)
+    return Response(RestaurantSerializer(user, context={'request': request}).data)
 
 
 @api_view(['GET'])
