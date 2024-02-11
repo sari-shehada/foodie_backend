@@ -1,4 +1,5 @@
 from collections import ChainMap
+import datetime
 from random import choices
 import random
 from rest_framework.response import Response
@@ -65,7 +66,10 @@ def getRestaurantMeals(request, id):
 @api_view(['POST'])
 def addMealToRestaurant(request, restaurantId):
     data = request.data
-
+    restaurant = Restaurant.objects.get(id=restaurantId)
+    if (datetime.datetime.now().date() > restaurant.subscriptionExpirationDate):
+        return Response(status=status.HTTP_403_FORBIDDEN, data='Your subscription has expired')
+    print('Here')
     addMealForm = dict(ChainMap(data, {'restaurant': restaurantId}))
     addMealSerializer = MealSerializer(data=addMealForm)
     if (addMealSerializer.is_valid()):
